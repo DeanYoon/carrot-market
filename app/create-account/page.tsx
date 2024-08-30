@@ -1,42 +1,51 @@
-import FormButton from "@/components/form-btn";
-import FormInput from "@/components/form-input";
+"use client";
+import Button from "@/components/form-btn";
+import Input from "@/components/input";
 import SocialLogin from "@/components/social-login";
-import { ChatBubbleOvalLeftEllipsisIcon } from "@heroicons/react/20/solid";
-import Link from "next/link";
+import { createAccount } from "./actions";
+import { useFormState } from "react-dom";
+import { PASSWORD_MIN_LENGTH } from "@/lib/constants";
 
 export default function CreateAccount() {
+  const [state, dispatch] = useFormState(createAccount, null);
   return (
     <div className="flex flex-col gap-10 py-8 px-6">
       <div className="flex flex-col gap-2 *:font-medium">
         <h1 className="text-2xl">Hi!</h1>
         <h2 className="text-xl">Fill in the form below to join</h2>
       </div>
-      <form className="flex flex-col gap-3">
-        <FormInput
+      <form action={dispatch} className="flex flex-col gap-3">
+        <Input
           type="text"
           placeholder="Username"
+          name="username"
           required
-          errors={["username is too short"]}
+          errors={state?.fieldErrors.username}
         />
-        <FormInput
+        <Input
           type="email"
+          name="email"
           placeholder="Email"
           required
-          errors={["wrong email"]}
+          errors={state?.fieldErrors.email}
         />
-        <FormInput
+        <Input
           type="password"
+          name="password"
           placeholder="Password"
           required
-          errors={["use Aa$ once each"]}
-        />{" "}
-        <FormInput
+          minLength={PASSWORD_MIN_LENGTH}
+          errors={state?.fieldErrors.password}
+        />
+        <Input
           type="password"
+          name="confirm_password"
           placeholder="Confirm Password"
           required
-          errors={["Invalid password"]}
+          minLength={PASSWORD_MIN_LENGTH}
+          errors={state?.fieldErrors.confirm_password}
         />
-        <FormButton text="Create account" loading={false} />
+        <Button text="Create account" />
       </form>
       <SocialLogin />
     </div>

@@ -14,3 +14,13 @@
     @apply w-full text-center bg-orange-500 text-white text-lg font-medium py-2.5 rounded hover:bg-orange-400 transition-colors;
   }
 }
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
