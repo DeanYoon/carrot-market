@@ -26,7 +26,5 @@ export async function login(prevState: any, formData: FormData) {
     } else {
         console.log(result.data)
     }
-    return {
-        errors: ["wrong password", "password too short"],
-    };
+
 }
