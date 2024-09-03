@@ -6,6 +6,8 @@ import SocialLogin from "@/components/social-login";
 import { useFormState } from "react-dom";
 import { login } from "./action";
 import { PASSWORD_MIN_LENGTH } from "@/lib/constants";
+import { cookies } from "next/headers";
+import { getIronSession } from "iron-session";
 
 export default function Login() {
   const [state, dispatch] = useFormState(login, null);
