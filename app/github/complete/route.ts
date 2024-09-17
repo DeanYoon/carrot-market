@@ -62,7 +62,6 @@ export async function GET(request: NextRequest) {
         }
     })
 
-    console.log('test')
 
     const newUser = await db.user.create({
         data: {
