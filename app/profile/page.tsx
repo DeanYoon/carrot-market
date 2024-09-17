@@ -20,6 +20,7 @@ export default async function Profile() {
   const user = await getUser();
 
   const logOut = async () => {
+    //인라인 이므로 use server 사용
     "use server";
     const session = await getSession();
     await session.destroy();
