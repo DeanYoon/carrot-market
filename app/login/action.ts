@@ -4,10 +4,8 @@ import { PASSWORD_MIN_LENGTH, PASSWORD_REGEX, PASSWORD_REGEX_ERROR } from "@/lib
 import db from "@/lib/db";
 import { z } from "zod";
 import bcrypt from "bcrypt"
-import { getIronSession } from 'iron-session';
-import { cookies } from 'next/headers';
-import { redirect } from "next/navigation";
-import getSession from "@/lib/session";
+
+import loginUser from "@/lib/login";
 
 
 const checkEmail = async (email: string) => {
@@ -49,11 +47,7 @@ export async function login(prevState: any, formData: FormData) {
     })
     const passwordMatch = await bcrypt.compare(result.data.password, user!.password ?? "")
     if (passwordMatch) {
-        const session = await getSession()
-        session.id = user!.id
-
-        await session.save()
-        return redirect('/profile')
+        await loginUser(user)
     } else {
         return {
             fieldErrors: {
