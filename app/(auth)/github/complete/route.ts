@@ -1,4 +1,4 @@
-import { getPublicEmail, getUserProfile } from "@/app/utils/githubUtils";
+import { getPublicEmail, getUserProfile } from "@/app/(auth)/utils/githubUtils";
 import db from "@/lib/db";
 import loginUser from "@/lib/login";
 import { notFound, redirect } from "next/navigation";
