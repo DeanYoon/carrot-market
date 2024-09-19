@@ -9,6 +9,7 @@ import { redirect } from "next/navigation"; // Import the correct redirect funct
 import db from "@/lib/db";
 import crypto from "crypto"
 import loginUser from "@/lib/login";
+import getSession from "@/lib/session";
 const phoneSchema = z.string().trim().refine(phone => validator.isMobilePhone(phone, "ja-JP"), "Wrong phone format")
 
 
@@ -115,13 +116,18 @@ export async function smsLogin(prevState: ActionState, formData: FormData) {
         }
     })
 
-    //생성한 데이터 삭제 
-    await db.sMSToken.deleteMany({
+
+    await db.sMSToken.delete({
         where: {
-            id: smsToken?.id
-        }
-    })
+            id: smsToken!.id,
+        },
+    });
     // log the user in
-    await loginUser(smsToken)
+    const session = await getSession();
+    session.id = smsToken!.userId;
+    await session.save();
+    redirect("/profile");
+
+
 
 }

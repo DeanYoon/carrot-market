@@ -1,3 +1,6 @@
+"use server";
+
+
 import { redirect } from "next/navigation"
 import getSession from "./session"
 
@@ -6,5 +9,5 @@ export default async function loginUser(user: { id: number } | null) {
     session.id = user?.id
     await session.save()
 
-    return redirect("/profile")
+    redirect("/profile")
 }
