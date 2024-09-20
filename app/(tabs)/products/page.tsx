@@ -27,7 +27,7 @@ export type initialProducts = Prisma.PromiseReturnType<typeof InitialProducts>;
 export default async function Products() {
   const initialProducts = await InitialProducts();
   return (
-    <div>
+    <div className="p-5">
       <ProductList initialProducts={initialProducts} />
 
       <Link
