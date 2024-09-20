@@ -1,7 +1,11 @@
 import ListProduct from "@/components/list-product";
+import ProductList from "@/components/product-list";
 import db from "@/lib/db";
+import { PlusIcon } from "@heroicons/react/20/solid";
+import { Prisma } from "@prisma/client";
+import Link from "next/link";
 
-async function getProducts() {
+async function InitialProducts() {
   const products = await db.product.findMany({
     select: {
       title: true,
@@ -10,18 +14,28 @@ async function getProducts() {
       photo: true,
       id: true,
     },
+    take: 10,
+    orderBy: {
+      created_at: "desc",
+    },
   });
   return products;
 }
 
-export default async function Products() {
-  const products = await getProducts();
+export type initialProducts = Prisma.PromiseReturnType<typeof InitialProducts>;
 
+export default async function Products() {
+  const initialProducts = await InitialProducts();
   return (
-    <div className="flex flex-col gap-5">
-      {products.map((product) => (
-        <ListProduct key={product.id} {...product} />
-      ))}
+    <div>
+      <ProductList initialProducts={initialProducts} />
+
+      <Link
+        href="/products/add"
+        className=" bg-orange-500 flex items-center justify-center rounded-full size-16 fixed  bottom-24  right-8 text-white hover:bg-orange-400"
+      >
+        <PlusIcon className="size-10" />
+      </Link>
     </div>
   );
 }
