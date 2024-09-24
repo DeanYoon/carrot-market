@@ -4,13 +4,14 @@ import Button from "@/components/form-btn";
 import Input from "@/components/input";
 import { PhotoIcon } from "@heroicons/react/20/solid";
 import { useState } from "react";
-import { uploadProduct } from "./actions";
+import { getUploadUrl, uploadProduct } from "./actions";
 import { useFormState } from "react-dom";
 
 export default function AddProduct() {
   const [preview, setPreview] = useState("");
-
-  const onImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const [uploadUrl, setUploadUrl] = useState("");
+  const [photoId, setPhotoId] = useState("");
+  const onImageChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const {
       target: { files },
     } = event;
@@ -18,13 +19,41 @@ export default function AddProduct() {
       return;
     }
     const file = files[0];
-    if (file) {
-      const imageUrl = URL.createObjectURL(file); // Create a URL for the selected image
-      setPreview(imageUrl); // Set the image URL as the preview
+    const imageUrl = URL.createObjectURL(file); // Create a URL for the selected image
+    setPreview(imageUrl); // Set the image URL as the preview
+    const { result, success } = await getUploadUrl();
+    if (success) {
+      const { id, uploadUrl } = result;
+      setUploadUrl(uploadUrl);
+      setPhotoId(id);
     }
   };
 
-  const [state, action] = useFormState(uploadProduct, null);
+  const interceptAction = async (_: any, formData: FormData) => {
+    //upload image to cloudflare
+    const file = formData.get("photo");
+    if (!file) {
+      return;
+    }
+
+    const cloudflareForm = new FormData();
+    cloudflareForm.append("file", file);
+    const response = await fetch(uploadUrl, {
+      method: "post",
+      body: cloudflareForm,
+    });
+    if (response.status !== 200) {
+      return;
+    }
+    const photoUrl = `https://imagedelivery.net/NNvtxoeNSTgqpQu5EeHI6w/${photoId}`;
+
+    //replace 'photo' in formData
+    formData.set("photo", photoUrl);
+    // call upload product
+    console.log(formData);
+    return uploadProduct(_, formData);
+  };
+  const [state, action] = useFormState(interceptAction, null);
   return (
     <div>
       <form action={action} className="flex flex-col gap-5 p-5">
